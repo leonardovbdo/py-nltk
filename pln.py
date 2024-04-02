@@ -2,7 +2,7 @@ from nltk import word_tokenize, corpus
 from nltk.corpus import floresta
 from nltk.stem import RSLPStemmer
 
-LINGUAGEM = 'portuguese'
+LINGUAGEM = "portuguese"
 
 def iniciar():
     iniciado, classificacoes, palavras_de_parada = False, None, None
@@ -14,11 +14,11 @@ def iniciar():
         for (palavra, classificacao) in floresta.tagged_words():
             classificacoes[palavra.lower()] = classificacao
 
-        iniciado = True    
+        iniciado = True
     except Exception as e:
         print(f"ocorreu um erro acessando o nltk: {str(e)}")
 
-    return iniciado, classificacoes, palavras_de_parada
+    return iniciado, classificacoes, palavras_de_parada 
 
 def obter_tokens(texto):
     tokens = word_tokenize(texto, LINGUAGEM)
@@ -28,7 +28,6 @@ def obter_tokens(texto):
 def imprimir_tokens(tokens):
     for token in tokens:
         print(token)
-    print("\n")
 
 def eliminar_palavras_de_parada(tokens, palavras_de_parada):
     tokens_filtrados = []
@@ -39,20 +38,30 @@ def eliminar_palavras_de_parada(tokens, palavras_de_parada):
 
     return tokens_filtrados
 
-def classificar_gramaticamente(tokens, classificacao):
+def classificar_gramaticamente(tokens, classificacoes):
     for token in tokens:
         classificacao = classificacoes[token]
         print(f"{token} é um(a) {classificacao}")
 
-TEXTO = "a verdadeira generosidade para com o futuro consiste em dar tudo ao presente" #albert camus
+def estemizar(tokens):
+    estemizador = RSLPStemmer()
+
+    for token in tokens:
+        raiz = estemizador.stem(token)
+
+        print(f"a raiz da palavra {token} é {raiz}")
+
+TEXTO = "A verdadeira generosidade para com o futuro consiste em dar tudo ao presente" #albert camus
 
 if __name__ == "__main__":
     iniciado, classificacoes, palavras_de_parada = iniciar()
     if iniciado:
-        tokens = obter_tokens(TEXTO)
-        imprimir_tokens(tokens)
-
+        tokens = obter_tokens(TEXTO.lower())
+        # imprimir_tokens(tokens)
+        
         tokens = eliminar_palavras_de_parada(tokens, palavras_de_parada)
-        #imprimir_tokens(tokens)
+        # imprimir_tokens(tokens)
 
         classificar_gramaticamente(tokens, classificacoes)
+
+        estemizar(tokens)
